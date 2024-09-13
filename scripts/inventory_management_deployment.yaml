@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inventory-management
+  template:
+    metadata:
+      labels:
+        app: inventory-management
+    spec:
+      containers:
+      - name: inventory-management
+        image: deakinlab.azurecr.io/project_part3_inventory_management:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://deakinlab_n7w5_user:I0NHfqcbJRZaGIDOrr6UAGfwpyzjipWZ@dpg-cri0mglumphs73cb3oeg-a.oregon-postgres.render.com/deakinlab_n7w5"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-management-service
+spec:
+  selector:
+    app: inventory-management
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8001
+  type: LoadBalancer
